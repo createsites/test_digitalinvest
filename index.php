@@ -3,30 +3,16 @@
 namespace App;
 
 
-// autoload php classes
-// todo: it's better to use composer PSR-4 autoload
-define('SRC_PATH', __DIR__ . '/src');
-spl_autoload_register(function ($class) {
-    $path = SRC_PATH . '/' . str_replace('\\', '/', $class) . '.php';
-    if (file_exists($path)) {
-        require_once $path;
-    }
-});
+use App\Controllers\Controller;
+use Dotenv\Dotenv;
 
 header('Content-Type: text/html; charset=windows-1251');
 
-// db connection
-try {
-    $db = DB::getInstance();
-    $db->init();
+require_once 'vendor/autoload.php';
 
-} catch (\Exception $e) {
-    die($e->getMessage());
-}
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-$controller = new Controller();
+new Database();
 
-$arResult = $controller->getModels();
-
-// rendering output
-$controller->showModels($arResult);
+(new Controller())->actionIndex();
